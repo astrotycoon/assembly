@@ -1,0 +1,163 @@
+From 8353a9f3d8f78c198a464ffedf7272b9ebc06f95 Mon Sep 17 00:00:00 2001
+From: Unknown <unknown>
+Date: Mon, 5 Apr 2010 17:38:00 +0200
+Subject: Add support for C99 VLA
+
+Add support for C99 Variable-Length Arrays
+
+Origin: http://savannah.nongnu.org/bugs/?13213#comment1
+Bug: http://savannah.nongnu.org/bugs/?13213
+Bug-Debian: http://bugs.debian.org/439135
+Last-Update: 2010-05-04
+---
+ libtcc.c |    4 ++++
+ tcc.h    |    2 +-
+ tccgen.c |   47 ++++++++++++++++++++++++++++++++++++++++++++---
+ tccpp.c  |   31 +++++++++++++++++++++++++++++++
+ 4 files changed, 80 insertions(+), 4 deletions(-)
+
+diff --git a/libtcc.c b/libtcc.c
+index 31914f7..add58ac 100644
+--- a/libtcc.c
++++ b/libtcc.c
+@@ -40,6 +40,8 @@ static int tok_flags;
+ #define TOK_FLAG_EOF   0x0008 /* end of file */
+ 
+ static int *macro_ptr, *macro_ptr_allocated;
++static int *user_macro_ptr;
++static int user_saved_buffer[TOK_MAX_SIZE + 1];
+ static int *unget_saved_macro_ptr;
+ static int unget_saved_buffer[TOK_MAX_SIZE + 1];
+ static int unget_buffer_enabled;
+@@ -129,6 +131,8 @@ static void unary_type(CType *type);
+ static void block(int *bsym, int *csym, int *case_sym, int *def_sym, 
+                   int case_reg, int is_expr);
+ static int expr_const(void);
++/* varray */
++static int expr_check_const(void);
+ static void expr_eq(void);
+ static void gexpr(void);
+ static void gen_inline_functions(void);
+diff --git a/tcc.h b/tcc.h
+index 4eccd23..6ffd161 100644
+--- a/tcc.h
++++ b/tcc.h
+@@ -140,7 +140,7 @@ typedef int BOOL;
+ 
+ #define TOK_HASH_SIZE       8192 /* must be a power of two */
+ #define TOK_ALLOC_INCR      512  /* must be a power of two */
+-#define TOK_MAX_SIZE        4 /* token max size in int unit when stored in string */
++#define TOK_MAX_SIZE        31 /* token max size in int unit when stored in string */
+ 
+ /* token symbol management */
+ typedef struct TokenSym {
+diff --git a/tccgen.c b/tccgen.c
+index fee07ae..f9568af 100644
+--- a/tccgen.c
++++ b/tccgen.c
+@@ -2756,9 +2756,37 @@ static void post_type(CType *type, AttributeDef *ad)
+             next();
+         n = -1;
+         if (tok != ']') {
+-            n = expr_const();
+-            if (n < 0)
+-                error("invalid array size");    
++            /* varray */
++            if (expr_check_const()) {
++                n = vtop->c.i;
++                vpop();
++                if (n < 0)
++                    error("invalid array size");
++            } else {
++                put_user_tok_start();
++                put_user_tok('=');
++#ifdef CONFIG_TCC_BCHECK
++                put_user_tok(TOK_alloca);
++#else
++		put_user_tok(tok_alloc("alloca", 6)->tok);
++#endif
++                put_user_tok('(');
++                while(tok != ']') {
++                    put_user_tok(tok);
++                    next();
++                }
++                put_user_tok(')');
++                skip(']');
++                if (tok != ';')
++                    error("not support varray type");
++                put_user_tok(tok);
++                put_user_tok_end();
++                next();
++                s = sym_push(SYM_FIELD, type, 0, -1);
++                type->t = (VT_PTR | VT_CONSTANT);
++                type->ref = s;
++                return;
++            }
+         }
+         skip(']');
+         /* parse next post type */
+@@ -3777,6 +3805,19 @@ static int expr_const(void)
+     return c;
+ }
+ 
++/* varray */
++static int expr_check_const(void)
++{
++    int last_tok = tok;
++    expr_const1();
++    if ((vtop->r & (VT_VALMASK | VT_LVAL | VT_SYM)) != VT_CONST) {
++        unget_tok(last_tok);
++        return(FALSE);
++    }
++    return(TRUE);
++}
++/* ~varray */
++
+ /* return the label token if current token is a label, otherwise
+    return zero */
+ static int is_label(void)
+diff --git a/tccpp.c b/tccpp.c
+index ff17d8b..4b8afd7 100644
+--- a/tccpp.c
++++ b/tccpp.c
+@@ -2846,6 +2846,37 @@ static inline void unget_tok(int last_tok)
+     tok = last_tok;
+ }
+ 
++/* varray */
++static inline void put_user_tok_start()
++{
++    user_macro_ptr = user_saved_buffer;
++}
++
++static inline void put_user_tok_end()
++{
++    const int user_tok_size = (uint32_t)user_macro_ptr - (uint32_t)user_saved_buffer;
++
++    *user_macro_ptr = 0;
++    unget_buffer_enabled = 1;
++    if (macro_ptr) {
++        memmove((uint8_t*)macro_ptr+user_tok_size, macro_ptr, user_tok_size-1);
++        memcpy(macro_ptr, user_saved_buffer, user_tok_size-1);
++    } else {
++        macro_ptr = user_saved_buffer;
++    }
++}
++
++static inline void put_user_tok(int last_tok)
++{
++    int i, n;
++
++    *user_macro_ptr++ = last_tok;
++    n = tok_ext_size(tok) - 1;
++    for(i=0;i<n;i++)
++        *user_macro_ptr++ = tokc.tab[i];
++}
++/* ~varray */
++
+ 
+ /* better than nothing, but needs extension to handle '-E' option
+    correctly too */
+-- 
+1.7.5.4
+

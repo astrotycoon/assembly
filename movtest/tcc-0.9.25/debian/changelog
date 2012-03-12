@@ -1,0 +1,466 @@
+tcc (0.9.25-10) unstable; urgency=medium
+
+  * Stop wrongly using multiarch dynamic loader as elf interpreter, eg. back
+    to use /lib64/ld-linux-x86-64.so.2 for amd64 (Closes: #636541).
+
+ -- Thomas Preud'homme <robotux@celest.fr>  Wed, 03 Aug 2011 18:04:35 +0200
+
+tcc (0.9.25-9) unstable; urgency=low
+
+  * Stop exporting tcc_add_file2(), tcc_add_sysfile() and
+    tcc_add_syslibrary_path() functions added for multiarch transitions.
+  * Use any-i386 and any-amd64 instead of hardcoded list of architectures.
+
+ -- Thomas Preud'homme <robotux@celest.fr>  Sun, 24 Jul 2011 21:27:09 +0200
+
+tcc (0.9.25-8) unstable; urgency=low
+
+  * Modify debian/rules to use patch added in 0.9.25-7 (Closes: #632089).
+  * Get DEB_HOST_MULTIARCH from dpkg-architecture to ensure it is set when
+    calling debian/rules manually.
+  * Fix build failure on i386: array_test should not define any parameter.
+  * Make patch for multilib consistent with regards to the filenames opened.
+
+ -- Thomas Preud'homme <robotux@celest.fr>  Mon, 11 Jul 2011 14:22:57 +0200
+
+tcc (0.9.25-7) unstable; urgency=medium (fix #632089)
+
+  * Search system files and library in multilib path (Closes: #632089).
+
+ -- Thomas Preud'homme <robotux@celest.fr>  Sun, 10 Jul 2011 17:22:36 +0200
+
+tcc (0.9.25-6) unstable; urgency=low
+
+  * Reactivate support for armel arch.
+  * Attempt to solve test suite failure on armel.
+  * Register documentation with doc-base.
+  * Fix the license of win32/tools/tiny_libmaker.c with author's agreement.
+  * Convert package to multiarch.
+  * debian/patches:
+    + Stricter test about declaration of static function without file scope in
+      local block to not error out in wrong situations (regression fix).
+    + Add function and variable assembly labels.
+  * debian/compat:
+    + Bump debhelper compatibility from 7 to 8 (no changes needed).
+  * debian/copyright:
+    + Update and convert to DEP5 candidate format.
+    + Update address of FSF.
+    + Remove duplicate notices and give redistribution license.
+  * debian/control:
+    + Bump Standards-Version to 3.9.2 (no changes needed).
+    + Improve synopsis wording for tcc.
+  * Remove useless debian/tcc.dirs file
+
+ -- Thomas Preud'homme <robotux@celest.fr>  Mon, 18 Oct 2010 15:58:01 +0200
+
+tcc (0.9.25-5) unstable; urgency=low
+
+  * Drop support for armel arch.
+
+ -- Thomas Preud'homme <robotux@celest.fr>  Sun, 05 Sep 2010 23:15:47 +0200
+
+tcc (0.9.25-4) unstable; urgency=low
+
+  * Fix bashims in configure and gcctestsuite.sh.
+  * Add support for indirect functions as externals.
+  * Bump Standard-Version from 3.8.4 to 3.9.1 (no changes needed).
+  * debian/control:
+    - Improve package description for libtcc-dev.
+
+ -- Thomas Preud'homme <robotux@celest.fr>  Tue, 10 Aug 2010 00:10:30 +0200
+
+tcc (0.9.25-3) unstable; urgency=low
+
+  * Change Vcs fields to reference Alioth.
+  * Don't load libtcc1.a if not available (fix a FTBFS on armel).
+  * Link alias symbols together. (Closes: #452876)
+  * Support C99 Variable-Length Arrays. (Closes: #439135)
+
+ -- Thomas Preud'homme <robotux@celest.fr>  Sat, 01 May 2010 23:44:46 +0200
+
+tcc (0.9.25-2) unstable; urgency=low
+
+  * Make tcc build on armv5tel, armv6j and armv7a architectures.
+  * Clean patches submitted upstream following upstream advice.
+  * Also clean 438097_configure_allow_nostrip.diff patch.
+  * Convert patches to DEP3 patch format.
+
+ -- Thomas Preud'homme <robotux@celest.fr>  Tue, 20 Apr 2010 22:44:37 +0200
+
+tcc (0.9.25-1) unstable; urgency=low
+
+  * New upstream release (Closes: #549100, LP: #500296).
+    - Supports amd64 architecture.
+  * Fix Hurd FTBFS (Closes: #532503).
+  * Improve tcc handling of ld scripts: libs in GROUP command are
+    searched repeatedly, as required.
+  * Add support for kfreebsd-amd64.
+  * Cherry-pick 55cb217 from upstream to fix incorrect elf output on
+    FreeBSD kernels.
+  * Make the package compile on armel (Closes: #506517).
+  * x86_64_alloca.diff: Add alloca on x86-64, from upstream commits
+    8ea8305 and dca2b15, to fix a test failure.
+  * 528902_texi_direntry.diff: Add @dircategory and @direntry
+    (Closes: #528902).
+  * Complain for static fct declared without file scope
+    (Closes: #170105).
+  * Install the libtcc library in the new libtcc-dev package
+    (Closes: #234245).
+  * Remove unnecessary patches.
+    - 322913_fix_casts_from_fp_to_bool.diff (already fixed in 0.9.24)
+    - 474883_fix_segmentation_fault_when_compiling.diff
+    - tcc-doc_texi_formatting.diff
+  * Rewrite 419203_fix_sizeof_parse_error.diff patch.
+  * Rebase patch on tcc version 0.9.25.
+  * Add debian/watch file.
+  * Switch to dpkg-source 3.0 (quilt) format.
+  * Add DESTDIR support in configure script.
+  * Move info file creation from debian/rules to upstream Makefile.
+  * Use a dh based debian/rule Makefile.
+  * Bump debhelper compatibility from 4 to 7 (no changes needed).
+  * Bump Standard-Version from 3.8.0 to 3.8.4 (no changes needed).
+  * Fill Vcs-Browser and Vcs-Git fields.
+  * Correctly support DEB_BUILD_OPTIONS.
+  * Don't rebuild the package if it was already built before.
+
+ -- Thomas Preud'homme <robotux@celest.fr>  Sat, 17 Apr 2010 20:41:12 +0200
+
+tcc (0.9.24-1) unstable; urgency=high
+
+  [ Aurélien GÉRÔME ]
+  * Change my email address in the Maintainer field.
+  * Bump Standards-Version to 3.8.0.
+  * Remove no longer used XS-Vcs-Git and XS-Vcs-Browser fields.
+  * Add the DM-Upload-Allowed field for Arthur.
+
+  [ Thomas Preud'homme ]
+  * New Upstream Version
+    - tcc now supports typename as structure field name (closes: #278698)
+    - A long long value used as a test expression ignores the
+      upper 32 bits at runtime (closes: #304082)
+  * Remove unecessary patches:
+    - 352202_fix_int_overflow.diff
+    - 283066_add_va_copy_define.diff (already disabled)
+    - 430209_fix_bound_check_error.diff
+  * Clean all patches (no fuzz or offset problem anymore)
+  * Add patch from Bradley Smith to allow compilation with gcc 4.3
+    (closes: #474883)
+  * Add tcc-doc_texi_formatting.diff to correct formatting of tcc-doc.texi
+
+ -- Thomas Preud'homme <robotux@celest.fr>  Mon, 16 Jun 2008 03:31:38 +0200
+
+tcc (0.9.24~cvs20070502-2) unstable; urgency=low
+
+  * 430209_fix_bound_check_error.diff: Add. (Closes: #430209)
+    - Thanks to Thomas Preud'homme.
+  * 438097_configure_allow_nostrip.diff: Add. (Closes: #438097)
+  * Add myself to Uploaders, update debian/copyright accordingly.
+  * debian/control: Use the new Homepage field.
+  * Port on hurd-i386:
+    - patches/series/hurd.diff: Add.
+    - debian/control: Update Architecture list.
+
+ -- Arthur Loiret <arthur.loiret@gmail.com>  Fri, 12 Oct 2007 04:31:48 +0200
+
+tcc (0.9.24~cvs20070502-1) unstable; urgency=low
+
+  [ Aurélien GÉRÔME ]
+  * New maintainer and co-maintainer. (Closes: #420643)
+  * Add the XS-Vcs-Git and XS-Vcs-Browser fields to debian/control.
+  * Update homepage with the tiny URL in debian/control.
+  * Remove unused ${misc:Depends} from debian/control.
+  * Short description in debian/control is not a sentence, so start
+    by a lowercase.
+  * Remove unused debhelper tools from debian/rules.
+  * Run test suite in debian/rules.
+  * Remove .pc/ directory after build in the clean target of
+    debian/rules.
+  * Update debian/copyright.
+  * TinyCC is no longer maintained upstream: use the latest CVS which
+    contains some fixes. See the upstream Changelog for details.
+    + Fix SIGSEGV due to tcc_load_dll() which read past the end of
+      a buffer. (Closes: #418360)
+  * Add quilt support. (Closes: #419423)
+    Break out monolithic patch into the following patches:
+    + buildsys.diff:
+      - use "-O2 -g -Wall" as the Debian Policy recommends;
+    + fhs.diff:
+      - use FHS paths in examples and documentation;
+    + 259619_error_init_char_array_with_non_literal.diff;
+    + 283066_add_va_copy_define.diff:
+      - disabled, merged upstream;
+    + 322913_fix_casts_from_fp_to_bool.diff;
+    + 372908_add_kfreebsd_arch.diff.
+  * Add 352202_fix_int_overflow.diff to fix CVE-2006-0635, thanks to
+    Rob Landley. (Closes: #352202)
+    + The sizeof, __alignof, and __alignof__ statements now return
+      an unsigned int.
+    + Add a test case for this vulnerability.
+
+  [ Thomas Preud'homme ]
+  * Add 419203_fix_sizeof_parse_error.diff to fix a bad parsing in
+    sizeof. (Closes: #419203)
+    + Add two tests for sizeof without parenthesis.
+
+ -- Aurélien GÉRÔME <ag@roxor.cx>  Tue, 08 May 2007 02:36:47 +0200
+
+tcc (0.9.23-4) unstable; urgency=low
+
+  * debian/control: Update description as suggested by Moritz Muehlenhoff
+    (see #352202).
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sat, 23 Sep 2006 21:56:45 +0200
+
+tcc (0.9.23-3) unstable; urgency=low
+
+  * Add support for kfreebsd-i386, with thanks to Pierre Chifflier
+    <chifflier@cpe.fr> (closes: #372908).
+  * Bumped Standards-Version to 3.7.2, no changes needed.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Fri, 14 Jul 2006 09:50:20 +0200
+
+tcc (0.9.23-2) unstable; urgency=low
+
+  * Apply patch from Marcelo Jimenez <marcelo.jimenez@gmail.com> fixing
+    casts from floating point types to _Bool (closes: #322913).
+  * debian/copyright: Use new FSF postal address.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Fri,  2 Sep 2005 19:53:58 +0200
+
+tcc (0.9.23-1) unstable; urgency=low
+
+  * New upstream release.
+  * Bumped Standards-Version to 3.6.2.1, no changes needed.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sat, 18 Jun 2005 10:13:55 +0200
+
+tcc (0.9.22-2) unstable; urgency=low
+
+  * Apply patch from Hasso Tepper <hasso@linux.ee> adding a va_copy macro
+    to stdarg.h (closes: #283066).
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sat, 27 Nov 2004 18:00:46 +0100
+
+tcc (0.9.22-1) unstable; urgency=low
+
+  * New upstream release (closes: #279007).
+  * Dropped patch by Brian Gough for const casts, this release has a
+    better fix.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Mon,  8 Nov 2004 22:41:38 +0100
+
+tcc (0.9.21-1) unstable; urgency=low
+
+  * New upstream release, fixes long long arithmetic (closes: #267644).
+  * debian/rules: Pass docdir to the upstream Makefile.
+  * debian/tcc.docs: Remove tcc-doc.html, now installed.
+  * Commented out build and installation of ARM and C67 binaries in
+    upstream's Makefile since we don't ship them (yet).
+  * This is the "TCC can now build a bootable Linux kernel" release.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Tue, 26 Oct 2004 12:22:36 +0200
+
+tcc (0.9.20-5) unstable; urgency=low
+
+  * Error out with an explicit message when trying to initialize a
+    character array with something that's not a literal (optionally
+    enclosed in braces) as per C99 6.7.8:14; thanks to Antti-Juhani
+    Kaijanaho <ajk@debian.org> who did all the work (closes: #259619).
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sat, 24 Jul 2004 15:11:35 +0200
+
+tcc (0.9.20-4) unstable; urgency=low
+
+  * Apply patch from Antti-Juhani Kaijanaho <ajk@debian.org> to allow
+    _Bool in bit-fields (closes: #259614).
+
+ -- Romain Francoise <rfrancoise@debian.org>  Fri, 23 Jul 2004 17:38:29 +0200
+
+tcc (0.9.20-3) unstable; urgency=low
+
+  * Apply patch from Brian Gough <bjg@network-theory.co.uk> to fix
+    problems with const casts (closes: #199463).
+  * debian/control:
+    + Add URL markers to description.
+    + Change Recommends to libc6-dev | libc-dev.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sat, 19 Jun 2004 23:16:37 +0200
+
+tcc (0.9.20-2) unstable; urgency=low
+
+  * debian/changelog: Convert to UTF-8.
+  * Replace "/usr/local/bin/tcc" with "/usr/bin/tcc" in documentation,
+    since Debian ships tcc in /usr.
+  * debian/rules: remove libtcc1.a in clean target.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Mon,  6 Oct 2003 19:49:43 +0200
+
+tcc (0.9.20-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sun,  5 Oct 2003 12:37:16 +0200
+
+tcc (0.9.19-4) unstable; urgency=low
+
+  * debian/control: Add Recommends on libc-dev, as it will most probably
+    be useful.
+  * Backport fixes from upstream CVS to fix problems with .gnu.linkonce
+    sections (closes: #213047).
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sat,  4 Oct 2003 18:21:01 +0200
+
+tcc (0.9.19-3) unstable; urgency=low
+
+  * Backport fix from upstream CVS to fix problems with ld (closes:
+    #213047).
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sun, 28 Sep 2003 13:22:11 +0200
+
+tcc (0.9.19-2) unstable; urgency=low
+
+  * debian/control: Update maintainer email address.
+  * debian/copyright: Ditto.
+  * Bumped Standards-Version to 3.6.1.0, no changes needed.
+
+ -- Romain Francoise <rfrancoise@debian.org>  Sat, 27 Sep 2003 12:19:03 +0200
+
+tcc (0.9.19-1) unstable; urgency=low
+
+  * New upstream release (closes: #192939, #193491).
+  * debian/copyright: upstream changed license to LGPL.
+  * Bumped Standards-Version to 3.5.10, no changes needed.
+
+ -- Romain Francoise <romain@orebokech.com>  Sat, 24 May 2003 19:23:17 +0200
+
+tcc (0.9.18-3) unstable; urgency=low
+
+  * Dummy upload, sponsor forgot to upload the .orig.tar.gz last time.
+
+ -- Romain Francoise <romain@orebokech.com>  Sun, 20 Apr 2003 17:25:20 +0200
+
+tcc (0.9.18-2) unstable; urgency=low
+
+  * debian/control: Provide c-compiler.  Suggested by José Luis González
+    González <jlg80@mi.madritel.es>.
+  * debian/rules: Policy requires that shared object files be stripped, so
+    strip object files installed in /usr/lib.
+
+ -- Romain Francoise <romain@orebokech.com>  Sat, 19 Apr 2003 15:05:16 +0200
+
+tcc (0.9.18-1) unstable; urgency=low
+
+  * New upstream release (closes: #189457).
+  * debian/rules:
+    - Upstream tarball now includes a configure script, use it.
+    - Do not install tcclib, it should be a separate binary package 
+      (and a shared library).  
+    - Upstream now provides a clean Texinfo file, so install it as
+      /usr/share/info/tcc.info.
+  * debian/control: Add Build-Depends on texinfo.
+  * debian/tcc.{postinst,prerm}: Handle installation of the Info file.
+
+ -- Romain Francoise <romain@orebokech.com>  Fri, 18 Apr 2003 20:37:09 +0200
+
+tcc (0.9.16-7) unstable; urgency=low
+
+  * Add new maintainer contact in debian/copyright.
+  * Now use ${misc:Depends} in debian/control.
+  * Bumped Standards-Version to 3.5.9.
+  * Get rid of some DH_COMPAT variables.
+
+ -- Romain Francoise <romain@orebokech.com>  Tue, 25 Mar 2003 16:00:54 +0100
+
+tcc (0.9.16-6) unstable; urgency=low
+
+  * I'm now the official maintainer, package sponsored by Cyril Bouthors
+    <cyril@bouthors.org> until my NM application is finished.
+
+ -- Romain Francoise <romain@orebokech.com>  Sun,  2 Mar 2003 18:49:54 +0100
+
+tcc (0.9.16-5) unstable; urgency=low
+
+  * Include examples from the upstream tarball since they demonstrate most
+    of the interesting features of TCC.
+  * Non-maintainer release.
+
+ -- Romain Francoise <romain@orebokech.com>  Sun,  9 Feb 2003 20:40:16 +0100
+
+tcc (0.9.16-4) unstable; urgency=low
+
+  * Lintian check: refer to the Debian common license file for the GNU
+    GPL in debian/copyright.
+  * Reword the description and add upstream URL in debian/control.
+  * Now use debhelper V4.
+  * Non-maintainer release.
+
+ -- Romain Francoise <romain@orebokech.com>  Sun,  9 Feb 2003 19:51:47 +0100
+
+tcc (0.9.16-3) unstable; urgency=low
+
+  * Bumped Standards-Version to 3.5.8.
+  * Non-maintainer release.
+
+ -- Romain Francoise <romain@orebokech.com>  Sat,  8 Feb 2003 17:07:52 +0100
+
+tcc (0.9.16-2) unstable; urgency=low
+
+  * Register tcc as an alternative to cc (closes: #175178).
+  * Non-maintainer release.
+
+ -- Romain Francoise <romain@orebokech.com>  Sat,  8 Feb 2003 15:54:03 +0100
+
+tcc (0.9.16-1) unstable; urgency=low
+
+  * New upstream release (closes: #179213).
+  * Non-maintainer release.
+
+ -- Romain Francoise <romain@orebokech.com>  Sat,  8 Feb 2003 11:36:57 +0100
+
+tcc (0.9.14-1) unstable; urgency=low
+
+  * New upstream release (closes: #170094, #170095, #170100, #170103).
+
+ -- Cyril Bouthors <cyril@bouthors.org>  Sun, 24 Nov 2002 19:02:56 +0100
+
+tcc (0.9.13-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Cyril Bouthors <cyril@bouthors.org>  Tue, 12 Nov 2002 01:59:39 +0100
+
+tcc (0.9.12-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Cyril Bouthors <cyril@bouthors.org>  Mon,  9 Sep 2002 07:51:47 +0200
+
+tcc (0.9.11-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Cyril Bouthors <cyril@bouthors.org>  Mon,  2 Sep 2002 17:47:10 +0200
+
+tcc (0.9.10-1) unstable; urgency=low
+
+  * New upstream release (closes: #155234)
+
+ -- Cyril Bouthors <cyril@bouthors.org>  Mon, 19 Aug 2002 11:15:56 +0200
+
+tcc (0.9.9-1) unstable; urgency=low
+
+  * New upstream release  (closes: #151269).
+
+ -- Cyril Bouthors <cyril@bouthors.org>  Sun, 28 Jul 2002 04:27:42 +0200
+
+tcc (0.9.7-2) unstable; urgency=low
+
+  * Set Debian Architecture to i386 only (closes: #150919).
+
+ -- Cyril Bouthors <cyril@bouthors.org>  Mon,  1 Jul 2002 13:26:56 +0200
+
+tcc (0.9.7-1) unstable; urgency=low
+
+  * Initial Release (closes: #150241).
+
+ -- Cyril Bouthors <cyril@bouthors.org>  Mon, 17 Jun 2002 13:27:14 +0200

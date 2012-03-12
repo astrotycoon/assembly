@@ -1,0 +1,84 @@
+From 7af1ab756cbb3330c94718fef97f7bd9218c8b03 Mon Sep 17 00:00:00 2001
+From: Thomas Preud'homme <thomas.preudhomme@celest.fr>
+Date: Sun, 11 Apr 2010 01:53:40 +0200
+Subject: Fix sizeof parse error
+
+sizeof operator exists in two form:
+1. sizeof unary-expression
+2. sizeof (type-name)
+The two forms are currently distinguished by the presence of parenthesis. It's
+an improper test as (int) { 'a' } is a valid unary-expression. This patch make
+tcc try both forms in order.
+
+Origin: vendor
+Bug-Debian: http://bugs.debian.org/419203
+Forwarded: http://lists.nongnu.org/archive/html/tinycc-devel/2010-04/msg00041.html
+Reviewed-by: grischka <grishka@gmx.de>
+Last-Update: 2010-04-20
+Applied-Upstream: 8de9b7a6314a4e93e88518b0b2f0e084cbc448b0
+---
+ tccgen.c |   23 +++++++++++++++++------
+ 1 files changed, 17 insertions(+), 6 deletions(-)
+
+diff --git a/tccgen.c b/tccgen.c
+index b4b5d59..5fa9f43 100644
+--- a/tccgen.c
++++ b/tccgen.c
+@@ -47,6 +47,13 @@ void vsetc(CType *type, int r, CValue *vc)
+     vtop->c = *vc;
+ }
+ 
++/* push constant of type "type" with useless value */
++void vpush(CType *type)
++{
++    CValue cval;
++    vsetc(type, VT_CONST, &cval);
++}
++
+ /* push integer constant */
+ void vpushi(int v)
+ {
+@@ -2944,11 +2951,14 @@ static void vpush_tokc(int t)
+ 
+ static void unary(void)
+ {
+-    int n, t, align, size, r;
++    int n, t, align, size, r, sizeof_caller;
+     CType type;
+     Sym *s;
+     AttributeDef ad;
++    static int in_sizeof = 0;
+ 
++    sizeof_caller = in_sizeof;
++    in_sizeof = 0;
+     /* XXX: GCC 2.95.3 does not generate a table although it should be
+        better here */
+  tok_next:
+@@ -3045,6 +3055,10 @@ static void unary(void)
+                 memset(&ad, 0, sizeof(AttributeDef));
+                 decl_initializer_alloc(&type, &ad, r, 1, 0, 0);
+             } else {
++                if (sizeof_caller) {
++                    vpush(&type);
++                    return;
++                }
+                 unary();
+                 gen_cast(&type);
+             }
+@@ -3114,11 +3128,8 @@ static void unary(void)
+     case TOK_ALIGNOF2:
+         t = tok;
+         next();
+-        if (tok == '(') {
+-            parse_expr_type(&type);
+-        } else {
+-            unary_type(&type);
+-        }
++        in_sizeof++;
++        unary_type(&type); // Perform a in_sizeof = 0;
+         size = type_size(&type, &align);
+         if (t == TOK_SIZEOF) {
+             if (size < 0)
+-- 
+1.7.5.4
+

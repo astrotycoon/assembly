@@ -1,0 +1,34 @@
+From 63c05bcc4ab3571c2cc19865e530f9db49020f6e Mon Sep 17 00:00:00 2001
+From: Thomas Preud'homme <thomas.preudhomme@celest.fr>
+Date: Sun, 18 Apr 2010 19:29:11 +0200
+Subject: Add several ARM archs in configure
+
+Add support for:
+  - armv5tel
+  - armv6j
+  - armv7a
+
+Origin: vendor
+Forwarded: http://lists.nongnu.org/archive/html/tinycc-devel/2010-04/msg00047.html
+Last-Update: 2010-04-20
+Applied-Upstream: commit: e4ed4e7f4f6659c35d5e84b03451a4f135caff0c
+---
+ configure |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/configure b/configure
+index 743f52a..d026c25 100755
+--- a/configure
++++ b/configure
+@@ -42,7 +42,7 @@ case "$cpu" in
+   x86_64)
+     cpu="x86-64"
+   ;;
+-  armv4l)
++  armv4l|armv5tel|armv6j|armv7a)
+     cpu="armv4l"
+   ;;
+   alpha)
+-- 
+1.7.5.4
+

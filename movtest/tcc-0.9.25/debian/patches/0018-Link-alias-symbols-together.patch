@@ -1,0 +1,60 @@
+From ecc60fcf09a86993ddd0617e9228a0f680df1864 Mon Sep 17 00:00:00 2001
+From: Thomas Preud'homme <thomas.preudhomme@celest.fr>
+Date: Mon, 26 Apr 2010 00:46:39 +0200
+Subject: Link alias symbols together
+
+Make sure alias symbols resolve to the same address in program .bss or .data
+section. This ensures for example that if a program references environ (via an
+extern char **environ declaration) and libc changes its value via the
+__environ alias after the R_ARCH_COPY relocation has been performed, then
+the program will see the new value.
+
+Origin: vendor
+Bug-Debian: http://bugs.debian.org/452876
+Forwarded: http://lists.nongnu.org/archive/html/tinycc-devel/2010-05/msg00001.html
+Last-Update: 2010-05-01
+Applied-Upstream: commit: a28b18fa16edaeb6bc7d34cf1ddac690b27ba610
+---
+ tccelf.c |   20 ++++++++++++++++++++
+ 1 files changed, 20 insertions(+), 0 deletions(-)
+
+diff --git a/tccelf.c b/tccelf.c
+index f256575..e7e2541 100644
+--- a/tccelf.c
++++ b/tccelf.c
+@@ -1438,12 +1438,32 @@ int elf_output_file(TCCState *s1, const char *filename)
+                                               sym - (ElfW(Sym) *)symtab_section->data);
+                             } else if (type == STT_OBJECT) {
+                                 unsigned long offset;
++                                ElfW(Sym) *dynsym, *dynsym_end;
+                                 offset = bss_section->data_offset;
+                                 /* XXX: which alignment ? */
+                                 offset = (offset + 16 - 1) & -16;
+                                 index = put_elf_sym(s1->dynsym, offset, esym->st_size, 
+                                                     esym->st_info, 0, 
+                                                     bss_section->sh_num, name);
++                                /* Ensure symbol aliases (that is, symbols with
++                                   the same st_value) resolve to the same
++                                   address in program .bss or .data section. */
++                                dynsym_end = (ElfW(Sym) *)
++                                             (s1->dynsymtab_section->data +
++                                              s1->dynsymtab_section->data_offset);
++                                for(dynsym = (ElfW(Sym) *)s1->dynsymtab_section->data + 1;
++                                    dynsym < dynsym_end; dynsym++) {
++                                    if (dynsym->st_value == esym->st_value) {
++                                        char *dynname;
++                                        dynname = s1->dynsymtab_section->link->data
++                                                  + dynsym->st_name;
++                                        put_elf_sym(s1->dynsym, offset,
++                                                    dynsym->st_size,
++                                                    dynsym->st_info, 0,
++                                                    bss_section->sh_num,
++                                                    dynname);
++                                    }
++                                }
+                                 put_elf_reloc(s1->dynsym, bss_section, 
+                                               offset, R_COPY, index);
+                                 offset += esym->st_size;
+-- 
+1.7.5.4
+

@@ -1,0 +1,47 @@
+From abc315dcb1922c41519728c8d05e1355da512714 Mon Sep 17 00:00:00 2001
+From: Thomas Preud'homme <thomas.preudhomme@celest.fr>
+Date: Thu, 7 Oct 2010 10:04:25 +0200
+Subject: Explicit license in tiny_libmaker.c
+
+Explicit the license in tiny_libmaker.c to LGPLv2. Confirmation of the
+license of this file can be found at
+http://lists.nongnu.org/archive/html/tinycc-devel/2010-07/msg00004.html
+
+Origin: vendor
+Forwarded: http://lists.nongnu.org/archive/html/tinycc-devel/2010-07/msg00004.html
+Last-Update: 2010-10-07
+Applied-Upstream: commit: c1c4040d752190c45850b19c165d20619cd1de5a
+---
+ win32/tools/tiny_libmaker.c |   16 ++++++++++++++--
+ 1 files changed, 14 insertions(+), 2 deletions(-)
+
+diff --git a/win32/tools/tiny_libmaker.c b/win32/tools/tiny_libmaker.c
+index cf9ac67..ab08f78 100644
+--- a/win32/tools/tiny_libmaker.c
++++ b/win32/tools/tiny_libmaker.c
+@@ -4,8 +4,20 @@
+  * usage: tiny_libmaker [lib] files...
+  * Copyright (c) 2007 Timppa
+  *
+- * This program is free software but WITHOUT ANY WARRANTY
+- */ 
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
++ */
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+-- 
+1.7.5.4
+

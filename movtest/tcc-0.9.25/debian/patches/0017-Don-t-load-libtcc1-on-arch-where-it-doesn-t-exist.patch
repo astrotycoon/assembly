@@ -1,0 +1,51 @@
+From d758c71330d1b1c544f0a1e51f78a1c68023acd3 Mon Sep 17 00:00:00 2001
+From: Thomas Preud'homme <thomas.preudhomme@celest.fr>
+Date: Tue, 27 Apr 2010 20:13:19 +0200
+Subject: Don't load libtcc1 on arch where it doesn't exist
+
+ARM architecture doesn't have any libtcc1 implementation but tcc load
+libtcc1.a in either case. This patch adds a conditional preprocessor
+instruction to load libtcc1.a only when there is an implementation for
+the target architecture.
+
+Origin: vendor
+Bug-Debian: https://buildd.debian.org/fetch.cgi?pkg=tcc;ver=0.9.25-2;arch=armel;stamp=1272363068
+Forwarded: http://lists.nongnu.org/archive/html/tinycc-devel/2010-05/msg00005.html
+Last-Update: 2010-05-04
+Applied-Upstream: commit: 2220467fcf27dbdf6b0d6d8cc56eb65bc35a78ab
+---
+ Makefile |    1 +
+ tccelf.c |    2 ++
+ 2 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index f79e298..cf38acc 100644
+--- a/Makefile
++++ b/Makefile
+@@ -47,6 +47,7 @@ BCHECK_O=bcheck.o
+ else
+ ifeq ($(ARCH),arm)
+ NATIVE_TARGET=-DTCC_TARGET_ARM
++NATIVE_TARGET+=-DWITHOUT_LIBTCC
+ NATIVE_TARGET+=$(if $(wildcard /lib/ld-linux.so.3),-DTCC_ARM_EABI)
+ NATIVE_TARGET+=$(if $(shell grep -l "^Features.* \(vfp\|iwmmxt\) " /proc/cpuinfo),-DTCC_ARM_VFP)
+ else
+diff --git a/tccelf.c b/tccelf.c
+index 9d66512..f256575 100644
+--- a/tccelf.c
++++ b/tccelf.c
+@@ -1204,9 +1204,11 @@ static void tcc_add_runtime(TCCState *s1)
+ #ifdef CONFIG_USE_LIBGCC
+         tcc_add_file(s1, CONFIG_SYSROOT "/lib/libgcc_s.so.1");
+ #else
++#ifndef WITHOUT_LIBTCC
+         snprintf(buf, sizeof(buf), "%s/%s", s1->tcc_lib_path, "libtcc1.a");
+         tcc_add_file(s1, buf);
+ #endif
++#endif
+     }
+     /* add crt end if not memory output */
+     if (s1->output_type != TCC_OUTPUT_MEMORY && !s1->nostdlib) {
+-- 
+1.7.5.4
+

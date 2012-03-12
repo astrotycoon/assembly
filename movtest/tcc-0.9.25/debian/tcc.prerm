@@ -1,0 +1,22 @@
+#!/bin/sh
+
+set -e
+
+case "$1" in
+    remove|upgrade|deconfigure)
+        if [ -L /usr/doc/tcc ]; then
+	    rm -f /usr/doc/tcc
+        fi
+	update-alternatives --quiet --remove cc /usr/bin/tcc;
+        ;;
+    failed-upgrade)
+        ;;
+    *)
+        echo "prerm called with unknown argument \`$1'" >&2
+        exit 0
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0

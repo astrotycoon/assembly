@@ -1,0 +1,77 @@
+From ec723807307c9cb4ea3eefbaf2b9c75be1b43db4 Mon Sep 17 00:00:00 2001
+From: Romain Francoise <rfrancoise@debian.org>
+Date: Sat, 13 Mar 2010 18:07:11 +0100
+Subject: Adapt tcc to debian build system
+
+* Use CFLAGS in compilation rules
+* Delete -g from CFLAGS as dpkg-buildpackage define CFLAGS with -g -O2
+  or -g -O0 depending on the content of DEB_BUILD_OPTIONS
+* Add -g in CFLAGS in configure script to keep the same compilation
+  behavior as upstream when hand-compiling (without dpkg-buildpackge)
+* Delete -s from install rule as dh_strip does the stripping if
+  necessary according to DEB_BUILD_OPTIONS
+
+Origin: vendor
+Forwarded: not-needed
+Last-Update: 2010-04-20
+---
+ Makefile  |    8 ++++----
+ configure |    2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 730b817..5af111e 100644
+--- a/Makefile
++++ b/Makefile
+@@ -5,7 +5,7 @@
+ TOP ?= .
+ include $(TOP)/config.mak
+ 
+-CFLAGS+=-g -Wall
++CFLAGS+=-Wall
+ CFLAGS_P=$(CFLAGS) -pg -static -DCONFIG_TCC_STATIC
+ LIBS_P=
+ 
+@@ -184,7 +184,7 @@ endif
+ endif
+ 
+ %.o: %.c
+-	$(LIBTCC1_CC) -o $@ -c $< -O2 -Wall
++	$(LIBTCC1_CC) -o $@ -c $< $(CFLAGS)
+ 
+ %.o: %.S
+ 	$(LIBTCC1_CC) -o $@ -c $<
+@@ -193,7 +193,7 @@ libtcc1.a: $(LIBTCC1_OBJS)
+ 	$(AR) rcs $@ $^
+ 
+ bcheck.o: bcheck.c
+-	$(CC) -o $@ -c $< -O2 -Wall
++	$(CC) -o $@ -c $< $(CFLAGS)
+ 
+ # install
+ TCC_INCLUDES = stdarg.h stddef.h stdbool.h float.h varargs.h tcclib.h
+@@ -236,7 +236,7 @@ install: $(PROGS) $(LIBTCC1) libtcc.a tcc-doc.html
+ 	mkdir -p "$(tccdir)/examples"
+ 	mkdir -p "$(tccdir)/doc"
+ 	mkdir -p "$(tccdir)/libtcc"
+-	$(INSTALL) -s -m755 $(PROGS) "$(tccdir)"
++	$(INSTALL) -m755 $(PROGS) "$(tccdir)"
+ 	$(INSTALL) -m644 $(LIBTCC1) win32/lib/*.def "$(tccdir)/lib"
+ 	cp -r win32/include/. "$(tccdir)/include"
+ 	cp -r win32/examples/. "$(tccdir)/examples"
+diff --git a/configure b/configure
+index 5b38f28..c2d0666 100755
+--- a/configure
++++ b/configure
+@@ -135,7 +135,7 @@ done
+ 
+ # Checking for CFLAGS
+ if test -z "$CFLAGS"; then
+-    CFLAGS="-O2"
++    CFLAGS="-g -O2"
+ fi
+ 
+ cc="${cross_prefix}${cc}"
+-- 
+1.7.5.4
+

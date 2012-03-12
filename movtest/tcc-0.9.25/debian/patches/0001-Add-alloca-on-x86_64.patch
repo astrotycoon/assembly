@@ -1,0 +1,73 @@
+From 8889545fa76049cc42e9dd40fba010b04603a2dc Mon Sep 17 00:00:00 2001
+From: Shinichiro Hamaji <shinichiro.hamaji _at_ gmail.com>
+Date: Sat, 13 Mar 2010 23:43:46 +0100
+Subject: Add alloca on x86_64
+
+Add alloca on x86-64 and align return value by 16.
+
+Origin: upstream, http://repo.or.cz/w/tinycc.git/commit/dca2b15df42c1341794dd412917708416da25594
+Last-Update: 2010-04-20
+Applied-Upstream: commit: dca2b15df42c1341794dd412917708416da25594
+---
+ Makefile          |    4 ++++
+ lib/alloca86_64.S |   33 +++++++++++++++++++++++++++++++++
+ 2 files changed, 37 insertions(+), 0 deletions(-)
+ create mode 100644 lib/alloca86_64.S
+
+diff --git a/Makefile b/Makefile
+index 1a2b5f7..730b817 100644
+--- a/Makefile
++++ b/Makefile
+@@ -177,6 +177,10 @@ VPATH+=win32/lib
+ endif
+ ifeq ($(ARCH),i386)
+ LIBTCC1_OBJS+=alloca86.o alloca86-bt.o
++else
++ifeq ($(ARCH),x86-64)
++LIBTCC1_OBJS+=alloca86_64.o
++endif
+ endif
+ 
+ %.o: %.c
+diff --git a/lib/alloca86_64.S b/lib/alloca86_64.S
+new file mode 100644
+index 0000000..684a3e9
+--- /dev/null
++++ b/lib/alloca86_64.S
+@@ -0,0 +1,33 @@
++/* ---------------------------------------------- */
++/* alloca86_64.S */
++
++#include "../config.h"
++
++.globl alloca
++
++alloca:
++    pop     %rdx
++    mov     %rdi,%rax
++    add     $15,%rax
++    and     $-16,%rax
++    jz      p3
++
++#ifdef TCC_TARGET_PE
++    /* XXX: not tested */
++p1:
++    cmp     $4096,%rax
++    jle     p2
++    sub     $4096,%rsp
++    sub     $4096,%rax
++    test    %rax,(%rsp)
++    jmp p1
++p2:
++#endif
++
++    sub     %rax,%rsp
++    mov     %rsp,%rax
++p3:
++    push    %rdx
++    ret
++
++/* ---------------------------------------------- */
+-- 
+1.7.5.4
+

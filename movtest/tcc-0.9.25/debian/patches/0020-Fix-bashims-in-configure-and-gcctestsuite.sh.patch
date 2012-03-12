@@ -1,0 +1,77 @@
+From 291bd5931f6b090556b3c7680dc96821a6cc6f47 Mon Sep 17 00:00:00 2001
+From: Thomas Preud'homme <thomas.preudhomme@celest.fr>
+Date: Wed, 26 May 2010 13:45:16 +0200
+Subject: Fix bashims in configure and gcctestsuite.sh.
+
+configure and gcctestsuite.sh shell scripts contains bashisms although being
+bourne shell script. This patch fixes the following bashisms:
+* Use of $RANDOM variable (replaced by mktemp)
+* Use == in tests instead of just =
+* Use $[] for arithmetic computation istead of $(())
+
+Origin: vendor
+Bug-Debian: http://lists.debian.org/debian-devel/2010/05/msg00892.html
+Forwarded: http://lists.nongnu.org/archive/html/tinycc-devel/2010-05/msg00045.html
+Last-Update: 2010-06-22
+Applied-Upstrean: commit:dc265feb63c70a1a76fb566a6c05fe62246b65a0
+---
+ configure             |   10 +++++-----
+ tests/gcctestsuite.sh |    8 ++++----
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/configure b/configure
+index d026c25..2dad1e6 100755
+--- a/configure
++++ b/configure
+@@ -11,11 +11,11 @@ else
+     TMPDIR1="/tmp"
+ fi
+ 
+-TMPC="${TMPDIR1}/tcc-conf-${RANDOM}-$$-${RANDOM}.c"
+-TMPO="${TMPDIR1}/tcc-conf-${RANDOM}-$$-${RANDOM}.o"
+-TMPE="${TMPDIR1}/tcc-conf-${RANDOM}-$$-${RANDOM}"
+-TMPS="${TMPDIR1}/tcc-conf-${RANDOM}-$$-${RANDOM}.S"
+-TMPH="${TMPDIR1}/tcc-conf-${RANDOM}-$$-${RANDOM}.h"
++TMPC="$(mktemp --tmpdir=${TMPDIR1} tcc-conf-XXXXXXXXXX-$$-XXXXXXXXXX.c)"
++TMPO="$(mktemp --tmpdir=${TMPDIR1} tcc-conf-XXXXXXXXXX-$$-XXXXXXXXXX.o)"
++TMPE="$(mktemp --tmpdir=${TMPDIR1} tcc-conf-XXXXXXXXXX-$$-XXXXXXXXXX)"
++TMPS="$(mktemp --tmpdir=${TMPDIR1} tcc-conf-XXXXXXXXXX-$$-XXXXXXXXXX.S)"
++TMPH="$(mktemp --tmpdir=${TMPDIR1} tcc-conf-XXXXXXXXXX-$$-XXXXXXXXXX.h)"
+ 
+ # default parameters
+ build_cross="no"
+diff --git a/tests/gcctestsuite.sh b/tests/gcctestsuite.sh
+index bd9204b..f3cc538 100644
+--- a/tests/gcctestsuite.sh
++++ b/tests/gcctestsuite.sh
+@@ -8,11 +8,11 @@ nb_failed="0"
+ for src in $TESTSUITE_PATH/compile/*.c ; do
+   echo $TCC -o /tmp/test.o -c $src 
+   $TCC -o /tmp/test.o -c $src >> tcc.log 2>&1
+-  if [ "$?" == "0" ] ; then
++  if [ "$?" = "0" ] ; then
+      result="PASS"
+   else
+      result="FAIL"
+-     nb_failed=$[ $nb_failed + 1 ]
++     nb_failed=$(( $nb_failed + 1 ))
+   fi
+   echo "$result: $src"  >> tcc.sum
+ done
+@@ -20,11 +20,11 @@ done
+ for src in $TESTSUITE_PATH/execute/*.c ; do
+   echo $TCC $src 
+   $TCC $src >> tcc.log 2>&1
+-  if [ "$?" == "0" ] ; then
++  if [ "$?" = "0" ] ; then
+      result="PASS"
+   else
+      result="FAIL"
+-     nb_failed=$[ $nb_failed + 1 ]
++     nb_failed=$(( $nb_failed + 1 ))
+   fi
+   echo "$result: $src"  >> tcc.sum
+ done
+-- 
+1.7.5.4
+

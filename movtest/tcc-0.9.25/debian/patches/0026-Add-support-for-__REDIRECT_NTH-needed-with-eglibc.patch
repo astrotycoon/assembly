@@ -1,0 +1,35 @@
+From 8a5908304596a720a98f1c8b9330572395b122c5 Mon Sep 17 00:00:00 2001
+From: Thomas Preud'homme <thomas.preudhomme@celest.fr>
+Date: Sat, 11 Sep 2010 17:57:15 +0200
+Subject: Add support for __REDIRECT_NTH needed with eglibc.
+
+Add support for __REDIRECT_NTH as eglibc makes use of this macro to
+redirect long double functions to long functions on arch not supporting
+long double.
+
+Origin: vendor
+Bug-Debian: http://bugs.debian.org/592618
+Forwarded: http://lists.nongnu.org/archive/html/tinycc-devel/2010-09/msg00021.html
+Last-Update: 2011-02-09
+Applied-Upstream: commit: 2596273fce52e1f9db1b03d495537614fd56cef5
+---
+ libtcc.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/libtcc.c b/libtcc.c
+index 4508f9f..dc9c885 100644
+--- a/libtcc.c
++++ b/libtcc.c
+@@ -1851,6 +1851,9 @@ TCCState *tcc_new(void)
+ #else
+     tcc_define_symbol(s, "__WCHAR_TYPE__", "int");
+ #endif
++
++    /* glibc defines */
++    tcc_define_symbol(s, "__REDIRECT_NTH(name, proto, alias)", "name proto __asm__ (#alias) __THROW");
+     
+ #ifndef TCC_TARGET_PE
+     /* default library paths */
+-- 
+1.7.5.4
+

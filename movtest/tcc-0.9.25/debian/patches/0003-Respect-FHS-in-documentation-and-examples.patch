@@ -1,0 +1,68 @@
+From 4e308deb56cfee82f61901667fd86bd464911513 Mon Sep 17 00:00:00 2001
+From: Marco Bodrato <bodrato@gulp.linux.it>
+Date: Sat, 13 Mar 2010 18:07:21 +0100
+Subject: Respect FHS in documentation and examples
+
+Replace /usr/local/bin/tcc by /usr/bin/tcc as the command to put in the shebang
+to run C code like a script with tcc, as requested by FHS.
+
+Origin: vendor
+Bug-Debian: http://bugs.debian.org/155234
+Forwarded: not-needed
+Reviewed-by: Cyril Bouthors <cyril@bouthors.org>
+Last-Update: 2010-04-20
+---
+ examples/ex1.c |    2 +-
+ examples/ex4.c |    2 +-
+ tcc-doc.texi   |    6 +++---
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/examples/ex1.c b/examples/ex1.c
+index 28139f9..1db5cfe 100755
+--- a/examples/ex1.c
++++ b/examples/ex1.c
+@@ -1,4 +1,4 @@
+-#! /usr/local/bin/tcc -run
++#! /usr/bin/tcc -run
+ #include <tcclib.h>
+ 
+ int main()
+diff --git a/examples/ex4.c b/examples/ex4.c
+index b33b033..0f3f87e 100755
+--- a/examples/ex4.c
++++ b/examples/ex4.c
+@@ -1,4 +1,4 @@
+-#!./tcc -run -L/usr/X11R6/lib -lX11
++#!/usr/bin/tcc -run -L/usr/X11R6/lib -lX11
+ #include <stdlib.h>
+ #include <stdio.h>
+ #include <X11/Xlib.h>
+diff --git a/tcc-doc.texi b/tcc-doc.texi
+index 7cc61bb..e5fb51c 100644
+--- a/tcc-doc.texi
++++ b/tcc-doc.texi
+@@ -126,10 +126,10 @@ Compile @file{a.c} and @file{b.c}, link them together and generate the object fi
+ Scripting:
+ 
+ TCC can be invoked from @emph{scripts}, just as shell scripts. You just
+-need to add @code{#!/usr/local/bin/tcc -run} at the start of your C source:
++need to add @code{#!/usr/bin/tcc -run} at the start of your C source:
+ 
+ @example
+-#!/usr/local/bin/tcc -run
++#!/usr/bin/tcc -run
+ #include <stdio.h>
+ 
+ int main() 
+@@ -182,7 +182,7 @@ tcc "-run -L/usr/X11R6/lib -lX11" ex4.c
+ In a script, it gives the following header:
+ 
+ @example
+-#!/usr/local/bin/tcc -run -L/usr/X11R6/lib -lX11
++#!/usr/bin/tcc -run -L/usr/X11R6/lib -lX11
+ #include <stdlib.h>
+ int main(int argc, char **argv)
+ @{
+-- 
+1.7.5.4
+

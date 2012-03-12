@@ -1,0 +1,35 @@
+From f84f616c7e94669ff3b6f452b687b352b9d93b50 Mon Sep 17 00:00:00 2001
+From: Romain Francoise <rfrancoise@debian.org>
+Date: Sat, 13 Mar 2010 18:07:57 +0100
+Subject: Error out on char array initialization with a non literal
+
+Error out with an explicit message when trying to initialize a character array
+with something that's not a literal (optionally enclosed in braces) as per
+C99 6.7.8:14; thanks to Antti-Juhani Kaijanaho <ajk@debian.org> who did all the
+work
+
+Origin: vendor
+Bug-Debian: http://bugs.debian.org/259619
+Forwarded: http://lists.nongnu.org/archive/html/tinycc-devel/2010-04/msg00041.html
+Last-Update: 2010-04-20
+---
+ tccgen.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/tccgen.c b/tccgen.c
+index 942c503..b4b5d59 100644
+--- a/tccgen.c
++++ b/tccgen.c
+@@ -4385,6 +4385,9 @@ static void decl_initializer(CType *type, Section *sec, unsigned long c,
+         no_oblock = 1;
+         if ((first && tok != TOK_LSTR && tok != TOK_STR) || 
+             tok == '{') {
++            if (tok != '{')
++                error("character array initializer must be a literal,"
++                    " optionally enclosed in braces");
+             skip('{');
+             no_oblock = 0;
+         }
+-- 
+1.7.5.4
+

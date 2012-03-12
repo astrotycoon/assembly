@@ -1,0 +1,49 @@
+Source: tcc
+Section: devel
+Priority: optional
+Maintainer: Aurélien GÉRÔME <ag@debian.org>
+Uploaders: Thomas Preud'homme <robotux@celest.fr>, Arthur Loiret <arthur.loiret@gmail.com>
+Build-Depends: debhelper (>= 8.1.3), texi2html, texinfo, perl
+Standards-Version: 3.9.2
+Homepage: http://www.tinycc.org/
+DM-Upload-Allowed: yes
+Vcs-Browser: http://git.debian.org/?p=collab-maint/tcc.git;a=summary
+Vcs-Git: git://git.debian.org/collab-maint/tcc.git
+
+Package: tcc
+Architecture: any-i386 any-amd64 armel
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: libc6-dev | libc-dev
+Provides: c-compiler
+Description: Small ANSI C compiler
+ TCC (for Tiny C Compiler) is a small and fast ANSI C compiler.  It
+ generates optimized x86 code, and can compile, assemble, and link
+ several times faster than 'gcc -O0'.  Any C dynamic library can be used
+ directly.  It includes an optional memory and bounds checker, and
+ bounds-checked code can be mixed freely with standard code.  C script
+ is also supported via the usual hash-bang mechanism.
+ .
+ NOTE: TCC is still somewhat experimental and is not recommended for
+ production use.  The code it generates is much less optimized than what
+ GCC produces, and compiler bugs can have serious security consequences
+ for your program.
+
+Package: libtcc-dev
+Section: libdevel
+Architecture: any-i386 any-amd64 armel
+Depends: ${misc:Depends}
+Description: Fast library for dynamic code generation
+ Libtcc is a library that uses tcc, a compiler several times faster than
+ 'gcc -O0' to perform dynamic code generation. It exposes in its API all
+ operations tcc performs to generate a binary from sources: setting
+ header and library paths, compiling program from a source file,
+ manipulating its symbols and handling relocation of its code among
+ other things. Libtcc is also able to compile from a buffer.
+ .
+ This package contains the static library and header file for TCC (Tiny
+ C Compiler).
+ .
+ NOTE: libtcc is still somewhat experimental and is not recommended for
+ production use.  The code it generates is much less optimized than what
+ GCC produces, and compiler bugs can have serious security consequences
+ for your program.

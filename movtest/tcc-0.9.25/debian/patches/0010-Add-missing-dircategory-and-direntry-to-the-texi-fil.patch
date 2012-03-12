@@ -1,0 +1,34 @@
+From 4144e184396aa1fc5cf1605e5010e039942c382d Mon Sep 17 00:00:00 2001
+From: Anders Kaseorg <andersk@MIT.EDU>
+Date: Sat, 13 Mar 2010 23:44:15 +0100
+Subject: Add missing dircategory and direntry to the texi file
+
+install-info require dircategory and a direntry entries in info files. This
+patch create those two entries.
+
+Origin: vendor
+Bug-Debian: http://bugs.debian.org/528902
+Forwarded: http://lists.nongnu.org/archive/html/tinycc-devel/2010-04/msg00041.html
+Last-Update: 2010-04-20
+---
+ tcc-doc.texi |    4 ++++
+ 1 files changed, 4 insertions(+), 0 deletions(-)
+
+diff --git a/tcc-doc.texi b/tcc-doc.texi
+index e5fb51c..e47c917 100644
+--- a/tcc-doc.texi
++++ b/tcc-doc.texi
+@@ -2,6 +2,10 @@
+ @c %**start of header
+ @setfilename tcc-doc.info
+ @settitle Tiny C Compiler Reference Documentation
++@dircategory Software development
++@direntry
++* TCC: (tcc-doc).               The Tiny C Compiler.
++@end direntry
+ @c %**end of header
+ 
+ @include config.texi
+-- 
+1.7.5.4
+

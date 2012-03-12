@@ -1,0 +1,34 @@
+From 1e1846b574fa32c0976e78fea3bde27df66644b2 Mon Sep 17 00:00:00 2001
+From: Thomas Preud'homme <thomas.preudhomme@celest.fr>
+Date: Mon, 11 Jul 2011 16:06:07 +0200
+Subject: Fix array_test: test take no parameter
+
+array_test is called without any parameter although it is defined with
+one parameter. Fix this by declaring 'a' as a local variable.
+
+Origin: vendor
+Forwarded: no
+Last-Updated: 2011-07-11
+---
+ tests/tcctest.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tests/tcctest.c b/tests/tcctest.c
+index a2d481a..3f39cd9 100644
+--- a/tests/tcctest.c
++++ b/tests/tcctest.c
+@@ -569,9 +569,9 @@ void scope_test()
+     printf("g5=%d\n", g);
+ }
+ 
+-void array_test(int a[4])
++void array_test()
+ {
+-    int i, j;
++    int i, j, a[4];
+ 
+     printf("array:\n");
+     printf("sizeof(a) = %d\n", sizeof(a));
+-- 
+1.7.5.4
+

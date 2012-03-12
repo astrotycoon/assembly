@@ -1,0 +1,13 @@
+Document: tcc-doc
+Title: Tiny C Compiler Reference Documentation
+Author: Fabrice Bellard
+Abstract: This manual documents version of the Tiny C Compiler.
+Section: Programming
+
+Format: HTML
+Index: /usr/share/doc/tcc/tcc-doc.html
+Files: /usr/share/doc/tcc/tcc-doc.html
+
+Format: Info
+Index: /usr/share/info/tcc-doc.info.gz
+Files: /usr/share/info/tcc-doc.info.gz

@@ -1,0 +1,119 @@
+From 62cbe0340d91a69518d63ff93c1cfcf2190b13ef Mon Sep 17 00:00:00 2001
+From: Thomas Preud'homme <thomas.preudhomme@celest.fr>
+Date: Thu, 8 Apr 2010 13:35:50 +0200
+Subject: Add info file creation into tcc build process
+
+Add info file creation in tcc Makefile
+
+Origin: vendor
+Forwarded: http://lists.nongnu.org/archive/html/tinycc-devel/2010-04/msg00041.html
+Last-Update: 2010-04-20
+---
+ Makefile  |   11 ++++++++---
+ configure |    9 +++++++++
+ 2 files changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 53afb0b..f79e298 100644
+--- a/Makefile
++++ b/Makefile
+@@ -111,7 +111,7 @@ ifdef CONFIG_CROSS
+ PROGS+=$(PROGS_CROSS)
+ endif
+ 
+-all: $(PROGS) $(LIBTCC1) $(BCHECK_O) libtcc.a tcc-doc.html tcc.1 libtcc_test$(EXESUF)
++all: $(PROGS) $(LIBTCC1) $(BCHECK_O) libtcc.a tcc-doc.html tcc.1 tcc-doc.info libtcc_test$(EXESUF)
+ 
+ # Host Tiny C Compiler
+ tcc$(EXESUF): $(NATIVE_FILES)
+@@ -200,11 +200,13 @@ TCC_INCLUDES = stdarg.h stddef.h stdbool.h float.h varargs.h tcclib.h
+ INSTALL=install
+ 
+ ifndef CONFIG_WIN32
+-install: $(PROGS) $(LIBTCC1) $(BCHECK_O) libtcc.a tcc.1 tcc-doc.html
++install: $(PROGS) $(LIBTCC1) $(BCHECK_O) libtcc.a tcc.1 tcc-doc.info tcc-doc.html
+ 	mkdir -p "$(bindir)"
+ 	$(INSTALL) -m755 $(PROGS) "$(bindir)"
+ 	mkdir -p "$(mandir)/man1"
+ 	$(INSTALL) tcc.1 "$(mandir)/man1"
++	mkdir -p $(infodir)
++	$(INSTALL)  tcc-doc.info "$(infodir)"
+ 	mkdir -p "$(tccdir)"
+ 	mkdir -p "$(tccdir)/include"
+ ifneq ($(LIBTCC1),)
+@@ -253,6 +255,9 @@ tcc.1: tcc-doc.texi
+ 	-./texi2pod.pl $< tcc.pod
+ 	-pod2man --section=1 --center=" " --release=" " tcc.pod > $@
+ 
++tcc-doc.info: tcc-doc.texi
++	makeinfo tcc-doc.texi
++
+ # tar release (use 'make -k tar' on a checkouted tree)
+ TCC-VERSION=tcc-$(shell cat VERSION)
+ tar:
+@@ -271,6 +276,6 @@ local_clean:
+ 	rm -vf $(PROGS) tcc_p$(EXESUF) tcc.pod *~ *.o *.a *.out libtcc_test$(EXESUF)
+ 
+ distclean: clean
+-	rm -vf config.h config.mak config.texi tcc.1 tcc-doc.html
++	rm -vf config.h config.mak config.texi tcc.1 tcc-doc.info tcc-doc.html
+ 
+ endif # ifeq ($(TOP),.)
+diff --git a/configure b/configure
+index 7be7760..1521228 100755
+--- a/configure
++++ b/configure
+@@ -27,6 +27,7 @@ libdir=""
+ tccdir=""
+ includedir=""
+ mandir=""
++infodir=""
+ sysroot=""
+ cross_prefix=""
+ cc="gcc"
+@@ -106,6 +107,8 @@ for opt do
+   ;;
+   --mandir=*) mandir=`echo $opt | cut -d '=' -f 2`
+   ;;
++  --infodir=*) infodir=`echo $opt | cut -d '=' -f 2`
++  ;;
+   --sysroot=*) sysroot=`echo $opt | cut -d '=' -f 2`
+   ;;
+   --source-path=*) source_path=`echo $opt | cut -d '=' -f 2`
+@@ -219,6 +222,7 @@ echo "  --bindir=DIR             user executables in DIR [EPREFIX/bin]"
+ echo "  --libdir=DIR             object code libraries in DIR [EPREFIX/lib]"
+ echo "  --includedir=DIR         C header files in DIR [PREFIX/include]"
+ echo "  --mandir=DIR             man documentation in DIR [PREFIX/man]"
++echo "  --infodir=DIR            info documentation in DIR [PREFIX/info]"
+ echo "  --enable-cross           build cross compilers"
+ echo ""
+ echo "Advanced options (experts only):"
+@@ -264,6 +268,9 @@ fi
+ if test x"$mandir" = x""; then
+ mandir="${prefix}/man"
+ fi
++if test x"$infodir" = x""; then
++infodir="${prefix}/info"
++fi
+ if test x"$includedir" = x""; then
+ includedir="${prefix}/include"
+ fi
+@@ -273,6 +280,7 @@ echo "TinyCC directory    $tccdir"
+ echo "Library directory   $libdir"
+ echo "Include directory   $includedir"
+ echo "Manual directory    $mandir"
++echo "Info directory      $infodir"
+ echo "Doc directory       $docdir"
+ echo "Target root prefix  $sysroot"
+ echo "Source path      $source_path"
+@@ -294,6 +302,7 @@ echo "tccdir=$tccdir" >> config.mak
+ echo "libdir=$libdir" >> config.mak
+ echo "includedir=$includedir" >> config.mak
+ echo "mandir=$mandir" >> config.mak
++echo "infodir=$infodir" >> config.mak
+ echo "docdir=$docdir" >> config.mak
+ echo "#define CONFIG_SYSROOT \"$sysroot\"" >> $TMPH
+ echo "#define CONFIG_TCCDIR \"$tccdir\"" >> $TMPH
+-- 
+1.7.5.4
+
