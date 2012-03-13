@@ -3,9 +3,9 @@
 .LC0:
 	.string	"The higher value is %d\n"
 	.text
-	.globl	main
+	.globl	_start
 	.type	main, @function
-main:
+_start:
 .LFB0:
 	.cfi_startproc
 	pushl	%ebp
@@ -40,6 +40,6 @@ main:
 	ret
 	.cfi_endproc
 .LFE0:
-	.size	main, .-main
+#	.size	main, .-main
 	.ident	"GCC: (Ubuntu/Linaro 4.6.1-9ubuntu3) 4.6.1"
 	.section	.note.GNU-stack,"",@progbits
