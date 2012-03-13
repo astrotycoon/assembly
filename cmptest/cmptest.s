@@ -6,9 +6,9 @@ _start:
 	movl $10, %ebx
 	cmp %eax, %ebx
 	jge greater
-	movl $1, %eax
+	movl $1, %eax	#call exit(), return 10
 	int $0x80
 greater:
-	movl $20, %ebx
-	movl $1, %eax
+	movl $20, %ebx	#return 20
+	movl $1, %eax	#call exit()
 	int $0x80

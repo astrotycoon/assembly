@@ -23,6 +23,6 @@ loop:
 	pushl %ebx		#push ebx to stack(store the largest num)
 	pushl $output
 	call printf
-	addl $8, %esp
+	addl $8, %esp		#should clear up stack
 	pushl $0
 	call exit
