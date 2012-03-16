@@ -12,7 +12,7 @@ _start:
 	leal space, %esi
 	leal buffer, %edi
 	movl $256, %ecx
-	cld
+	cld		#clear up DF
 	lodsb
 	rep stosb
 
