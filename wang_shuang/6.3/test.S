@@ -4,21 +4,18 @@
 	.file	"test.S"
 	.code16
 
-.extern __btext
-.extern __etext
-.extern __bdata
-.extern __edata
 .extern array_num
 .extern __bstack
 .extern __estack
-	
+.extern stack_size
+
 .section 	.data
 .type	data, @object
 .align 	16
-data:
+data_begin:
 	.short 0x0123, 0x0456, 0x0789, 0x0abc, 0x0def, 0x0fed, 0x0cba, 0x0987 
 data_end:
-	.equ	data_size, (data_end - data) / 2
+	.equ	data_size, (data_end - data_begin) / 2
 
 .section 	.bss
 	.type	stack, @object
@@ -31,8 +28,14 @@ _start:
 	nop
 
 	cli
+.if 0
 	movw $__estack, %sp
-//	movw $stack + 256, %sp
+.else
+//	movw $stack, %ax
+	movw $__bstack, %ax
+	addw $stack_size, %ax
+	movw %ax, %sp
+.endif
 	sti
 
 	movw $array_num, %cx
@@ -41,7 +44,7 @@ _start:
 	movw $0, %bx
 
 .save_to_stack:
-	pushw data(%bx) 
+	pushw data_begin(%bx) 
 	incw %bx
 	incw %bx
 	loop .save_to_stack 
@@ -50,7 +53,7 @@ _start:
 	movw $0, %bx
 
 .pop_to_data:
-	popw data(%bx) 
+	popw data_begin(%bx) 
 	incw %bx
 	incw %bx
 	loop .pop_to_data

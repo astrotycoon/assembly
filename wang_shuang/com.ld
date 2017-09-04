@@ -6,14 +6,15 @@ SECTIONS
 	{
 		*(.text);
 	}
+/*
 	.data :
 	{
 		*(.data);
-/*		*(.bss);	*/
 		*(.rodata);
 	}
 	.bss :
 	{
 		*(.bss);
 	}
+		*/
 }

@@ -9,6 +9,7 @@
 data:
 	.word 0x0123, 0x0456, 0x0789, 0x0abc, 0x0def, 0x0fed, 0x0cba, 0x0987 
 data_end:
+	.type 	data_len, @object
 	.equ	data_len, (data_end - data) / 2
 
 .section 	.text
@@ -18,16 +19,16 @@ _start:
 	nop
 
 	movw $0, %ax
-	movw %ax, %ds	
+	movw %ax, %es	
 
-	movw $0, %bx	/* %ds:0 -> 0:0 */
+	movw $0, %bx	/* %es:0 -> 0:0 */
 	movw $data_len, %cx
 
 .write:
 //	movw %ds:(%bx), %ax
 //	movw %ax, data(%bx)
-	pushw %ds:(%bx)
-	popw data(%bx)
+	pushw %es:(%bx)
+	popw %ds:data(%bx)
 	incw %bx
 	incw %bx
 	loop .write

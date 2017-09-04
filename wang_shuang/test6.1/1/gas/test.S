@@ -4,9 +4,6 @@
 	.file	"test.S"
 	.code16
 
-.extern __cs
-.extern __ds
-
 .section 	.data
 .align	16
 data:
@@ -24,7 +21,7 @@ _start:
 	movw $0, %ax
 	movw %ax, %es
 
-	movw $0, %bx	/* %es:0 -> 0:0 */
+	movw $0, %bx	/* %es:%bx -> 0:0 */
 	movw $data_len, %cx
 
 .write:
