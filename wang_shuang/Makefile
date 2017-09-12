@@ -1,8 +1,8 @@
 all:
-	as --32 -o 3.1-2.o 3.1-2.S 
-	ld -o 3.1-2 3.1-2.o --nmagic --script=com.ld
-	objcopy --output-target=binary 3.1-2 3.1-2.com 
+	as --32 -o test.o test.S
+#	ld -o test.com test.o --script=com.ld --print-map
+	/home/astrol/test/elfutils/elfutils-architecture-dependent/bin/eu-ld -v -o test.com test.o -c com.ld 
 
+	
 clean:
-	rm -rf 3.1-2.o 3.1-2 3.1-2.com 
-
+	rm -rf test.o test.com
