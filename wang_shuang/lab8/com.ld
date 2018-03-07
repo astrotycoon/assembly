@@ -10,7 +10,6 @@ SECTIONS
 		*(.text)
 		__text_end = .;
 	} 
-	__text_size = . - __text_begin;
 
 	.data ALIGN(16) :
 	{

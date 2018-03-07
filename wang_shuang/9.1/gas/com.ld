@@ -19,14 +19,6 @@ SECTIONS
 		__data_end = .;
 	}
 
-	. = 0x0300;
-	.table ALIGN(16) :
-	{
-		__table_begin = .;
-		*(.table)
-		__table_end = .;
-	}
-
 	/DISCARD/ : 
 	{
 		*(.bss)

@@ -10,8 +10,8 @@ SECTIONS
 		*(.text)
 		__text_end = .;
 	} 
-	__text_size = . - __text_begin;
 
+	. = 0x0200;
 	.data ALIGN(16) :
 	{
 		__data_begin = .;
@@ -19,9 +19,16 @@ SECTIONS
 		__data_end = .;
 	}
 
+	. = 0x0300;
+	.stack ALIGN(16) :
+	{
+		__stack_begin = .;
+		*(.bss)
+		__stack_end = .;
+	}
+
 	/DISCARD/ : 
 	{
-		*(.bss)
   		*(.note.GNU-stack) 
 		*(.gnu_debuglink) 
 		*(.gnu.lto_*) 
